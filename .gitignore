@@ -1,0 +1,5 @@
+# 忽略 paperAirplane/build 目录
+paperAirplane/build/
+
+# 忽略 paperAirplane/Move.lock 文件
+paperAirplane/Move.lock

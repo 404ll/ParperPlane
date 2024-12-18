@@ -1,5 +1,6 @@
 module paperairplane::paperairplane;
     use std::string::String;
+    use std::vector;
     use sui::{
         display,
         package,
@@ -9,12 +10,13 @@ module paperairplane::paperairplane;
 
     /*-------错误码-------*/
     const ENOT_OWNER :u64 = 0;
-    const E_EXSITS :u64 = 1;
+    const EOVERSIZE :u64 = 1;
 
     const VISUALIZATION_SITE:address = @0x1;
+    const MAX_SIZE :u64 = 3;
 
     /*-----事件------*/
-    public struct CreatedAirplane has copy, drop {
+    public struct CreatedAirplaneEvent has copy, drop {
         event_id: ID,
         name: String,
         b36addr:String
@@ -64,7 +66,10 @@ module paperairplane::paperairplane;
        transfer::public_transfer(site_display,ctx.sender());
     }
 
-    public entry fun create_airplane(airport:&mut Airport,name: String, content: String, ctx: &mut TxContext) {
+    public entry fun create_airplane(airport:&mut Airport,name: String, content: String, blobs:vector<String>, ctx: &mut TxContext) {
+       
+        assert!(vector::length(&blobs) > MAX_SIZE, EOVERSIZE);
+        
         let sender = ctx.sender();
         let id = object::new(ctx);
         let object_address = object::uid_to_address(&id);
@@ -72,20 +77,21 @@ module paperairplane::paperairplane;
         let event_id = id.to_inner();
 
 
-        let airplane = Airplane {
+        let mut airplane = Airplane {
             id,
             name,
-            content,
+            content: content,
             owner: sender,
             b36addr: b36addr,
             blobs:vector::empty()
         };
 
         vector::push_back(&mut airport.airplanes,object_address);
+        vector::append(&mut airplane.blobs,blobs);
 
         transfer::share_object(airplane);
 
-        emit(CreatedAirplane {
+        emit(CreatedAirplaneEvent {
             event_id,
             name:name,
             b36addr: b36addr
@@ -93,9 +99,3 @@ module paperairplane::paperairplane;
     }
 
 
-    public entry fun add_blob(plane:&mut Airplane,blob:String,ctx: &mut TxContext){
-        assert!(plane.owner == ctx.sender(),ENOT_OWNER);
-        assert!(!vector::contains(&plane.blobs,&blob),E_EXSITS);
-
-        vector::push_back(&mut plane.blobs,blob);
-    }
