@@ -58,7 +58,6 @@ export const getAirplanes = async (variables: NetworkVariables): Promise<AirPlan
       },
       cursor: nextCursor,
     })
-    console.log(airRawPlanes)
     nextCursor = airRawPlanes.nextCursor ?? null;
     hasNextPage = airRawPlanes.hasNextPage;
 
@@ -89,7 +88,6 @@ export const getAirplanes = async (variables: NetworkVariables): Promise<AirPlan
       }
       return fields as AirPlaneFields;
     })
-    console.log(`result: ${result}`)
     allResults = allResults.concat(result);
   }
   
