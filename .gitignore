@@ -1,5 +1,8 @@
 # 忽略 paperAirplane/build 目录
-paperAirplane/build/
+/paperAirplane/build/
 
 # 忽略 paperAirplane/Move.lock 文件
-paperAirplane/Move.lock
+/paperAirplane/Move.lock
+
+# 忽略 node_modules 文件
+/web/node_modules/
