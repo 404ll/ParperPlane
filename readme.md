@@ -2,15 +2,16 @@
 
 ## 🔦合约数据
 
-package id: 0xe937a7dc6c18dfdc5290e690e222ebc815d5071d5ce8935166e3d1045420147c
-airport object id:
-0xc69ddeb59cc610bc38c4ff760768fc834f7073b5a4700838e44a3f2c38be89c9
+- package id: 0x617bd5c3e074a51022641653b8b6b1313c3d365eb1441aecdfeffaec8668da5b
+
+- airport object id:
+0x90d878550ce2b7c01f784502aa8bcff8df73d88a4cbb94b145e28e16cb185233
 
 ## 🛠️协作命令
 
-npm i
-npm install @mysten/dapp-kit
-npm run dev
+- npm i <br/>
+- npm install @mysten/dapp-kit <br/>
+- npm run dev <br/>
 
 ## 🖥️ 前端-contracts
 

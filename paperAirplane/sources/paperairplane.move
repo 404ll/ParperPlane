@@ -68,7 +68,7 @@ module paperairplane::paperairplane;
 
     public entry fun create_airplane(airport:&mut Airport,name: String, content: String, blobs:vector<String>, ctx: &mut TxContext) {
        
-        assert!(vector::length(&blobs) > MAX_SIZE, EOVERSIZE);
+        assert!(vector::length(&blobs) < MAX_SIZE, EOVERSIZE);
         
         let sender = ctx.sender();
         let id = object::new(ctx);
@@ -97,5 +97,3 @@ module paperairplane::paperairplane;
             b36addr: b36addr
         });
     }
-
-
