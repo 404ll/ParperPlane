@@ -4,7 +4,7 @@ import { ConnectButton, useCurrentAccount } from '@mysten/dapp-kit';
 import Image from 'next/image';
 import { CreatePlaneDialog} from '@/components/CreatePlane';
 import { PlaneCard } from '@/components/Plane';
-
+import { Card } from '@/components/ui/card';
 
 
 export default function Home() {
@@ -50,13 +50,20 @@ export default function Home() {
                <CreatePlaneDialog disabled={!account}/>
              </div>
              <div className="flex flex-wrap justify-center gap-6 mt-10">
-              {/* // {airplanes.map((airplane) => (
-              //   <div key={airplane.id.id}>
-              //     <h2 className='text-2xl font-bold text-center'>{airplane.name}</h2>
-              //     <p>{airplane.content}</p>
-              //   </div>
-              // ))} */}
-              <PlaneCard  disabled={!account} />
+              <Card className="w-[350px] p-4">
+                <div className="flex flex-col items-center gap-4">
+                  <Image 
+                    src="/logo/image_2.png" 
+                    alt="Paper Plane" 
+                    width={200} 
+                    height={200} 
+                    className="object-contain"
+                  />
+                  <h2 className="text-2xl font-bold text-center font-['DynaPuff']">Paper Plane Title</h2>
+                  <p className="text-center text-gray-600">Your message content goes here...</p>
+                </div>
+              </Card>
+              <PlaneCard disabled={!account} />
              </div>
            </div>
          </main>

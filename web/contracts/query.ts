@@ -78,7 +78,7 @@ export const getAirplanes = async (variables: NetworkVariables) => {
       const { fields } = data as {
         fields: {
           b36addr: string
-          blobls: string[]
+          blobs: string[]
           content: string
           id: {
             id: string
