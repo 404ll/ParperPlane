@@ -4,8 +4,8 @@ type BaseContract = {
 }
 
 export const TestnetContract: BaseContract = {
-    packageId: "0xe937a7dc6c18dfdc5290e690e222ebc815d5071d5ce8935166e3d1045420147c",
-    airportObjectId: "0xc69ddeb59cc610bc38c4ff760768fc834f7073b5a4700838e44a3f2c38be89c9",
+    packageId: "0x617bd5c3e074a51022641653b8b6b1313c3d365eb1441aecdfeffaec8668da5b",
+    airportObjectId: "0x90d878550ce2b7c01f784502aa8bcff8df73d88a4cbb94b145e28e16cb185233",
 }
 
 export const MainnetContract: BaseContract = {

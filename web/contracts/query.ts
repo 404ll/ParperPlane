@@ -25,7 +25,7 @@ export const getUserProfile = async (address: string): Promise<CategorizedObject
     hasNextPage = response.hasNextPage;
     nextCursor = response.nextCursor ?? null;
   }
-
+  console.log("111")
   return categorizeSuiObjects(allObjects);
 };
 
@@ -37,7 +37,7 @@ type AirPlane = {
 
 export type AirPlaneFields = {
   b36addr: string;
-  blobls: string[];
+  blobs: string[];
   content: string;
   id: {
     id: string;
@@ -49,14 +49,16 @@ export type AirPlaneFields = {
 export const getAirplanes = async (variables: NetworkVariables) => {
   let hasNextPage = true;
   let nextCursor: EventId | null = null;
+  let allResults: AirPlaneFields[] = [];
+
   while (hasNextPage) {
     const airRawPlanes = await suiClient.queryEvents({
       query: {
-        MoveEventType: `${variables.packageId}::paperairplane::CreatedAirplane`
+        MoveEventType: `${variables.packageId}::paperairplane::CreatedAirplaneEvent`
       },
       cursor: nextCursor,
     })
-
+    console.log(airRawPlanes)
     nextCursor = airRawPlanes.nextCursor ?? null;
     hasNextPage = airRawPlanes.hasNextPage;
 
@@ -76,7 +78,7 @@ export const getAirplanes = async (variables: NetworkVariables) => {
       const { fields } = data as {
         fields: {
           b36addr: string
-          blobls: string[]
+          blobs: string[]
           content: string
           id: {
             id: string
@@ -87,7 +89,9 @@ export const getAirplanes = async (variables: NetworkVariables) => {
       }
       return fields as AirPlaneFields;
     })
-    console.log(result)
-    return result;
+    console.log(`result: ${result}`)
+    allResults = allResults.concat(result);
   }
+  
+  return allResults;
 }

@@ -16,8 +16,8 @@ export interface UploadBlobConfig {
 
 const DEFAULT_CONFIG: Required<UploadBlobConfig> = {
     initialEpochs: process.env.NEXT_PUBLIC_INITIAL_EPOCHS || '1',
-    initialPublisherUrl: process.env.NEXT_PUBLIC_PUBLISHER_URL || 'https://publisher-devnet.walrus.space',
-    initialAggregatorUrl: process.env.NEXT_PUBLIC_AGGREGATOR_URL || 'https://aggregator-devnet.walrus.space',
+    initialPublisherUrl: process.env.NEXT_PUBLIC_PUBLISHER_URL || 'https://walrus-testnet-publisher.nodeinfra.com',
+    initialAggregatorUrl: process.env.NEXT_PUBLIC_AGGREGATOR_URL || 'https://aggregator-testnet.walrus.space',
     proxyUrl: process.env.NEXT_PUBLIC_PROXY_URL || ''
 };
 
