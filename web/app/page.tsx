@@ -5,11 +5,22 @@ import Image from 'next/image';
 import { CreatePlaneDialog} from '@/components/CreatePlane';
 import { PlaneCard } from '@/components/Plane';
 import { Card } from '@/components/ui/card';
+import { useNetworkVariables } from '@/contracts';
+import { useEffect, useState } from 'react';
+import { AirPlaneFields, getAirplanes } from '@/contracts/query';
 
 
 export default function Home() {
   const account = useCurrentAccount();
+  const networkVariables = useNetworkVariables();
+  const [airplanes, setAirplanes] = useState<AirPlaneFields[]>([]);
   
+  
+  useEffect(() => {
+    getAirplanes(networkVariables).then((planes) => {
+      setAirplanes(planes ?? []);
+    });
+  }, [networkVariables]);
   return (
     <>
       <header className='flex justify-between items-center bg-[#F0F1F5] p-6'>
@@ -63,7 +74,7 @@ export default function Home() {
                   <p className="text-center text-gray-600">Your message content goes here...</p>
                 </div>
               </Card>
-              <PlaneCard disabled={!account} />
+              {airplanes.length > 0 && <PlaneCard airplanes={airplanes} />}
              </div>
            </div>
          </main>
