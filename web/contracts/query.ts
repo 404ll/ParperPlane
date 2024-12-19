@@ -37,7 +37,7 @@ type AirPlane = {
 
 export type AirPlaneFields = {
   b36addr: string;
-  blobls: string[];
+  blobs: string[];
   content: string;
   id: {
     id: string;
