@@ -91,5 +91,11 @@ export const getAirplanes = async (variables: NetworkVariables): Promise<AirPlan
     allResults = allResults.concat(result);
   }
   
-  return allResults;
+  if (allResults.length === 0) {
+    throw new Error("No airplanes found");
+  }
+
+  const randomIndex = Math.floor(Math.random() * allResults.length);
+  return [allResults[randomIndex]];
 }
+
