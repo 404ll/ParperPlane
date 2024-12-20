@@ -15,7 +15,7 @@ export interface UploadBlobConfig {
 }
 
 const DEFAULT_CONFIG: Required<UploadBlobConfig> = {
-    initialEpochs: process.env.NEXT_PUBLIC_INITIAL_EPOCHS || '1',
+    initialEpochs: process.env.NEXT_PUBLIC_INITIAL_EPOCHS || '7',
     initialPublisherUrl: process.env.NEXT_PUBLIC_PUBLISHER_URL || 'https://walrus-testnet-publisher.nodeinfra.com',
     initialAggregatorUrl: process.env.NEXT_PUBLIC_AGGREGATOR_URL || 'https://aggregator-testnet.walrus.space',
     proxyUrl: process.env.NEXT_PUBLIC_PROXY_URL || ''
@@ -65,7 +65,7 @@ export function useUploadBlob(config: UploadBlobConfig = {}) {
                     status: 'Already certified',
                     blobId: info.alreadyCertified.blobId,
                     endEpoch: info.alreadyCertified.endEpoch,
-                    suiRef: info.alreadyCertified.event.txDigest,
+                    suiRef: info.alreadyCertified.event?.txDigest,
                 };
             } else if ('newlyCreated' in info) {
                 blobInfo = {

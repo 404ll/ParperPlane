@@ -2,13 +2,6 @@
 
 import { Button } from "@/components/ui/button"
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
-import {
   FormControl,
   FormField,
   FormItem,
@@ -18,29 +11,29 @@ import {
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import Image from "next/image"
-import { useForm, FormProvider } from "react-hook-form"; 
-import { useBetterSignAndExecuteTransaction } from '@/hooks/useBetterTx';
-import { useCurrentAccount } from '@mysten/dapp-kit';
-import { createAirplane } from '@/contracts/paperairplane';
+import { useForm, FormProvider } from "react-hook-form"
+import { useBetterSignAndExecuteTransaction } from '@/hooks/useBetterTx'
+import { useCurrentAccount } from '@mysten/dapp-kit'
+import { createAirplane } from '@/contracts/paperairplane'
 import { useState } from 'react'
-import { isValidSuiAddress } from '@mysten/sui/utils';
+import { isValidSuiAddress } from '@mysten/sui/utils'
 import { useUploadBlob } from "@/hooks/useUploadBlob"
 import { toast } from "@/hooks/use-toast"
 
 interface CreatePlaneProps {
-  disabled?: boolean; // 可选属性
+  disabled?: boolean;
 }
 
-export function CreatePlaneDialog({disabled }: CreatePlaneProps) {
+export function CreatePlaneForm({ disabled }: CreatePlaneProps) {
   const form = useForm();
   const [name, setName] = useState("")
   const [content, setContent] = useState("")
   const account = useCurrentAccount();
   const { storeBlob } = useUploadBlob();
   const [isUploading, setIsUploading] = useState(false);
-  const [image, setImage] = useState<File | null>(null); 
+  const [image, setImage] = useState<File | null>(null);
 
-  const { handleSignAndExecuteTransaction} = useBetterSignAndExecuteTransaction({
+  const { handleSignAndExecuteTransaction } = useBetterSignAndExecuteTransaction({
     tx: createAirplane,
     onSuccess: () => {
       toast({
@@ -61,7 +54,7 @@ export function CreatePlaneDialog({disabled }: CreatePlaneProps) {
   }
 
   const handleImageClear = () => {
-    setImage(null); // 清除图片
+    setImage(null);
   }
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -100,112 +93,103 @@ export function CreatePlaneDialog({disabled }: CreatePlaneProps) {
   }
 
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button disabled={disabled} className="font-['DynaPuff'] w-fit px-[40px]">
-          Create Paper Plane
-        </Button>
-      </DialogTrigger>
+    <div className="bg-[#F0F1F5] p-6 rounded-lg shadow-md">
+      <h2 className="text-2xl font-bold mb-4" style={{fontFamily: 'DynaPuff'}}>Create Paper Plane</h2>
+      <FormProvider {...form}>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <FormField
+            control={form.control}
+            name="name"
+            render={() => (
+              <FormItem>
+                <FormLabel style={{fontFamily: 'DynaPuff'}}>Plane Name</FormLabel>
+                <FormControl>
+                  <Input
+                    id="name" 
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="Enter plane name"
+                    className="bg-white"
+                    style={{fontFamily: 'DynaPuff'}}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle style={{fontFamily: 'DynaPuff'}}> Write down your thoughts...</DialogTitle>
-        </DialogHeader>
+          <FormField
+            control={form.control}
+            name="content"
+            render={() => (
+              <FormItem>
+                <FormLabel style={{fontFamily: 'DynaPuff'}}>Content</FormLabel>
+                <FormControl>
+                  <Textarea
+                    id="content"
+                    value={content}
+                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                      setContent(e.target.value)
+                    }
+                    placeholder="Enter your thoughts"
+                    className="bg-white min-h-[100px]"
+                    style={{fontFamily: 'DynaPuff'}}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-        <FormProvider {...form}>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="name"
-              render={() => (
-                <FormItem>
-                  <FormLabel style={{fontFamily: 'DynaPuff'}}>Plane Name</FormLabel>
-                  <FormControl>
-                    <Input
-                      id="name" 
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      placeholder="Enter plane name"
-                      className="bg-white"
-                      style={{fontFamily: 'DynaPuff'}}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+          <div className="pt-2">
+            <Input
+              type="file"
+              accept="image/*"
+              onChange={handleImageUpload}
+              className="hidden"
+              id="picture-upload"
             />
-
-            <FormField
-              control={form.control}
-              name="content"
-              render={() => (
-                <FormItem>
-                  <FormLabel style={{fontFamily: 'DynaPuff'}}>Content</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      id="content"
-                      value={content}
-                      onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-                        setContent(e.target.value)
-                      }
-                      placeholder="Enter your thoughts"
-                      className="bg-white min-h-[100px]"
-                      style={{fontFamily: 'DynaPuff'}}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {/* 图片处理 */}
-            <div className="pt-2">
-              <Input
-                type="file"
-                accept="image/*"
-                onChange={handleImageUpload}
-                className="hidden"
-                id="picture-upload"
-              />
-              <label htmlFor="picture-upload">
+            <label htmlFor="picture-upload">
+              <Button
+                type="button"
+                variant="secondary"
+                className="w-full bg-white"
+                style={{fontFamily: 'DynaPuff'}}
+                onClick={() => document.getElementById("picture-upload")?.click()}
+              >
+                {image ? 'Change Picture' : 'Upload Picture'}
+              </Button>
+            </label>
+            {image && (
+              <div className="mt-2">
+                <p className="text-sm text-gray-500">{image.name}</p>
                 <Button
                   type="button"
-                  variant="secondary"
-                  className="w-full dyna-puff-font"
-                  onClick={() => document.getElementById("picture-upload")?.click()}
+                  style={{fontFamily: 'DynaPuff'}}
+                  variant="destructive"
+                  className="mt-1 text-sm"
+                  onClick={handleImageClear}
                 >
-                  {image ? 'Change Picture' : 'Upload Picture'}
+                  Clear Picture
                 </Button>
-              </label>
-              {image && (
-                <div className="mt-2">
-                  <p className="text-sm text-gray-500">{image.name}</p>
-                  <Button
-                    type="button"
-                    variant="destructive"
-                    className="mt-1 text-sm"
-                    onClick={handleImageClear}
-                  >
-                    Clear Picture
-                  </Button>
-                </div>
-              )}
-            </div>
+              </div>
+            )}
+          </div>
 
-            <div className="flex justify-end">
-              <Button 
-                type="submit" 
-                className="dyna-puff-font flex items-center bg-[#F0F1F5] text-black" 
-                style={{fontFamily: 'DynaPuff'}}
-                disabled={isUploading}
-              >
-                <Image src="/logo/launch.png" alt="Sui Logo" width={20} height={20} />
-                {isUploading ? 'Launching...' : 'Launch'}
-              </Button>
-            </div>
-          </form>
-        </FormProvider>
-      </DialogContent>
-    </Dialog>
+          <div className="flex justify-end">
+            <Button 
+              type="submit" 
+              className="dyna-puff-font flex items-center bg-white hover:bg-[#F0F1F5] text-black" 
+              style={{fontFamily: 'DynaPuff'}}
+              disabled={isUploading || disabled}
+            >
+              <Image src="/logo/launch.png" alt="Sui Logo" width={20} height={20} />
+              {isUploading ? 'Launching...' : 'Launch'}
+            </Button>
+          </div>
+        </form>
+      </FormProvider>
+    </div>
   )
 }
+
