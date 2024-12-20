@@ -2,25 +2,30 @@
 
 import { ConnectButton, useCurrentAccount } from '@mysten/dapp-kit';
 import Image from 'next/image';
-import { CreatePlaneDialog} from '@/components/CreatePlane';
+import { CreatePlaneForm } from '@/components/CreatePlane';
 import { PlaneCard } from '@/components/Plane';
-import { Card } from '@/components/ui/card';
 import { useNetworkVariables } from '@/contracts';
 import { useEffect, useState } from 'react';
 import { AirPlaneFields, getAirplanes } from '@/contracts/query';
-
 
 export default function Home() {
   const account = useCurrentAccount();
   const networkVariables = useNetworkVariables();
   const [airplanes, setAirplanes] = useState<AirPlaneFields[]>([]);
-  
+
+  // 获取飞机列表并更新状态
+  const handlePickUp = () => {
+    getAirplanes(networkVariables).then((planes) => {
+      setAirplanes(planes ?? []);
+    });
+  };
   
   useEffect(() => {
     getAirplanes(networkVariables).then((planes) => {
       setAirplanes(planes ?? []);
     });
   }, [networkVariables]);
+
   return (
     <>
       <header className='flex justify-between items-center bg-[#F0F1F5] p-6'>
@@ -37,7 +42,7 @@ export default function Home() {
      
       {account ? (
          <main className="container mx-auto px-4 py-8 relative min-h-screen">
-           {/* 背景布局 */}
+           {/* Background layout */}
            <div className="absolute inset-0 overflow-hidden">
              <div className="absolute top-[10%] left-[5%] rotate-[-15deg]">
                <Image src="/logo/image_2.png" alt="Paper Plane" width={150} height={283} style={{opacity: 0.2}} />
@@ -56,51 +61,41 @@ export default function Home() {
              </div>
            </div>
            
-           <div className="relative z-10">
-             <div className="flex justify-center items-center">
-               <CreatePlaneDialog disabled={!account}/>
+           <div className="relative z-10 flex justify-center max-w-6xl mx-auto">
+             <div className="w-1/3 pr-4">
+               <CreatePlaneForm disabled={!account}/>
              </div>
-             <div className="flex flex-wrap justify-center gap-6 mt-10">
-              <Card className="w-[350px] p-4">
-                <div className="flex flex-col items-center gap-4">
-                  <Image 
-                    src="/logo/image_2.png" 
-                    alt="Paper Plane" 
-                    width={200} 
-                    height={200} 
-                    className="object-contain"
-                  />
-                  <h2 className="text-2xl font-bold text-center font-['DynaPuff']">Paper Plane Title</h2>
-                  <p className="text-center text-gray-600">Your message content goes here...</p>
-                </div>
-              </Card>
-              {airplanes.length > 0 && <PlaneCard airplanes={airplanes} />}
+             <div className="w-2/3 pl-4 flex items-center">
+               <PlaneCard airplanes={airplanes} onPickUp={handlePickUp}/>
              </div>
            </div>
          </main>
-         ) : <div style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'flex-start',
-        minHeight: '100vh',
-        paddingTop: '10rem'
-      }}>
-        <h2 style={{
-          fontSize: '2.5rem',
-          fontFamily: 'DynaPuff',
-          marginBottom: '1rem' 
-        }}>
-          Making a paper plane to carry away your worries!
-        </h2>
-        <h2 style={{
-          fontSize: '1.5rem',
-          fontFamily: 'DynaPuff'
-        }}>
-          Connect wallet to get started
-        </h2>
-      </div>
+         ) : (
+           <div style={{
+             display: 'flex',
+             flexDirection: 'column',
+             alignItems: 'center',
+             justifyContent: 'flex-start',
+             minHeight: '100vh',
+             paddingTop: '10rem'
+           }}>
+             <h2 style={{
+               fontSize: '2.5rem',
+               fontFamily: 'DynaPuff',
+               marginBottom: '1rem' 
+             }}>
+               Making a paper plane to carry away your worries!
+             </h2>
+             <h2 style={{
+               fontSize: '1.5rem',
+               fontFamily: 'DynaPuff'
+             }}>
+               Connect wallet to get started
+             </h2>
+           </div>
+         )
       }
     </>
   );
 }
+

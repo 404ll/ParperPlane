@@ -80,3 +80,15 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+@keyframes fly-plane {
+  0% {
+    transform: translate(-100%, 100%) rotate(45deg);
+  }
+  100% {
+    transform: translate(100%, -100%) rotate(45deg);
+  }
+}
+
+
+
