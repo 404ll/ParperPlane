@@ -109,7 +109,7 @@ export function CreatePlaneDialog({disabled }: CreatePlaneProps) {
         <Button disabled={disabled} className="font-['DynaPuff'] w-fit px-[40px]">
           Create Paper Plane
         </Button>
-      </DialogTrigger>
+      </DialogTrigger> 
 
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
