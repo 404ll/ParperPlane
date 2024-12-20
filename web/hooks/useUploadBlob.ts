@@ -48,16 +48,19 @@ export function useUploadBlob(config: UploadBlobConfig = {}) {
                 body = fileOrUrl;
             }
 
+            
             const response = await fetch(`${publisherUrl}/v1/store?epochs=${epochs}`, {
                 method: 'PUT',
                 body: body,
             });
 
             if (!response.ok) {
-                throw new Error('Something went wrong when storing the blob!');
+                const errorText = await response.text();
+                throw new Error(`Server error: ${response.status} - ${errorText}`);
             }
 
             const info = await response.json();
+
             let blobInfo: UploadedBlobInfo;
 
             if ('alreadyCertified' in info) {
@@ -65,7 +68,7 @@ export function useUploadBlob(config: UploadBlobConfig = {}) {
                     status: 'Already certified',
                     blobId: info.alreadyCertified.blobId,
                     endEpoch: info.alreadyCertified.endEpoch,
-                    suiRef: info.alreadyCertified.event.txDigest,
+                    suiRef: info.alreadyCertified.event?.txDigest,
                 };
             } else if ('newlyCreated' in info) {
                 blobInfo = {
@@ -81,7 +84,11 @@ export function useUploadBlob(config: UploadBlobConfig = {}) {
             setUploadedBlobs(prev => [blobInfo, ...prev]);
             return blobInfo;
         } catch (error) {
-            console.error('Error in storeBlob:', error);
+            console.error('Detailed error in storeBlob:', {
+                error,
+                stack: error instanceof Error ? error.stack : undefined,
+                message: error instanceof Error ? error.message : 'Unknown error'
+            });
             throw error;
         } finally {
             setUploading(false);
