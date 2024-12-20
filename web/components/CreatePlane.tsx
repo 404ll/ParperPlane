@@ -24,7 +24,6 @@ import { useCurrentAccount } from '@mysten/dapp-kit';
 import { createAirplane } from '@/contracts/paperairplane';
 import { useState } from 'react'
 import { isValidSuiAddress } from '@mysten/sui/utils';
-import { useNetworkVariables } from '@/contracts';
 import { useUploadBlob } from "@/hooks/useUploadBlob"
 import { toast } from "@/hooks/use-toast"
 
@@ -36,7 +35,6 @@ export function CreatePlaneDialog({disabled }: CreatePlaneProps) {
   const form = useForm();
   const [name, setName] = useState("")
   const [content, setContent] = useState("")
-  const networkVariables = useNetworkVariables();
   const account = useCurrentAccount();
   const { storeBlob } = useUploadBlob();
   const [isUploading, setIsUploading] = useState(false);
@@ -45,10 +43,14 @@ export function CreatePlaneDialog({disabled }: CreatePlaneProps) {
   const { handleSignAndExecuteTransaction} = useBetterSignAndExecuteTransaction({
     tx: createAirplane,
     onSuccess: () => {
-      console.log('create airplane success');
+      toast({
+        title: "Success!",
+        description: "Your paper plane has been launched successfully!",
+        duration: 3000,
+      })
     },
     onSettled: () => {
-      console.log('create airplane settled'); 
+      //refresh data
     }
   });
 
@@ -75,16 +77,10 @@ export function CreatePlaneDialog({disabled }: CreatePlaneProps) {
         blobId = blobInfo.blobId
       }
 
-      await handleSignAndExecuteTransaction(networkVariables, {
+      await handleSignAndExecuteTransaction({
         name: name,
         content: content,
         blobs: blobId ? [blobId] : []
-      })
-
-      toast({
-        title: "Success!",
-        description: "Your paper plane has been launched successfully!",
-        duration: 3000,
       })
 
       setName("")

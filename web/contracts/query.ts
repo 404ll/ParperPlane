@@ -46,7 +46,7 @@ export type AirPlaneFields = {
   owner: string;
 }
 
-export const getAirplanes = async (variables: NetworkVariables) => {
+export const getAirplanes = async (variables: NetworkVariables): Promise<AirPlaneFields[]> => {
   let hasNextPage = true;
   let nextCursor: EventId | null = null;
   let allResults: AirPlaneFields[] = [];
@@ -58,7 +58,6 @@ export const getAirplanes = async (variables: NetworkVariables) => {
       },
       cursor: nextCursor,
     })
-    console.log(airRawPlanes)
     nextCursor = airRawPlanes.nextCursor ?? null;
     hasNextPage = airRawPlanes.hasNextPage;
 
@@ -89,7 +88,6 @@ export const getAirplanes = async (variables: NetworkVariables) => {
       }
       return fields as AirPlaneFields;
     })
-    console.log(`result: ${result}`)
     allResults = allResults.concat(result);
   }
   
