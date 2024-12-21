@@ -94,8 +94,7 @@ export const getAirplanes = async (variables: NetworkVariables): Promise<AirPlan
   if (allResults.length === 0) {
     throw new Error("No airplanes found");
   }
-
   const randomIndex = Math.floor(Math.random() * allResults.length);
-  return [allResults[randomIndex]];
+  return [allResults[randomIndex]]; 
 }
 

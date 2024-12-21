@@ -1,8 +1,10 @@
 import type { NextConfig } from "next";
 
+'use client';
 const nextConfig: NextConfig = {
-  /* config options here */
+  output: 'export',
   images: {
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: 'https',
@@ -10,6 +12,10 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  assetPrefix: '/',
+  trailingSlash: true,
+  distDir: 'out',
+  basePath: '',
 };
 
 export default nextConfig;

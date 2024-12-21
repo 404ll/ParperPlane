@@ -15,7 +15,7 @@ export interface UploadBlobConfig {
 }
 
 const DEFAULT_CONFIG: Required<UploadBlobConfig> = {
-    initialEpochs: process.env.NEXT_PUBLIC_INITIAL_EPOCHS || '1',
+    initialEpochs: process.env.NEXT_PUBLIC_INITIAL_EPOCHS || '100',
     initialPublisherUrl: process.env.NEXT_PUBLIC_PUBLISHER_URL || 'https://walrus-testnet-publisher.nodeinfra.com',
     initialAggregatorUrl: process.env.NEXT_PUBLIC_AGGREGATOR_URL || 'https://aggregator-testnet.walrus.space',
     proxyUrl: process.env.NEXT_PUBLIC_PROXY_URL || ''
@@ -35,6 +35,7 @@ export function useUploadBlob(config: UploadBlobConfig = {}) {
         try {
             let body: File | Blob;
             if (typeof fileOrUrl === 'string') {
+                console.log('Downloading from URL:', fileOrUrl);
                 const response = await fetch(finalConfig.proxyUrl, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -44,11 +45,12 @@ export function useUploadBlob(config: UploadBlobConfig = {}) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 body = await response.blob();
+                console.log('Downloaded blob size:', body.size);
             } else {
                 body = fileOrUrl;
+                console.log('Using provided file, size:', body.size);
             }
 
-            
             const response = await fetch(`${publisherUrl}/v1/store?epochs=${epochs}`, {
                 method: 'PUT',
                 body: body,
@@ -56,21 +58,33 @@ export function useUploadBlob(config: UploadBlobConfig = {}) {
 
             if (!response.ok) {
                 const errorText = await response.text();
+                console.error('Server error response:', errorText);
                 throw new Error(`Server error: ${response.status} - ${errorText}`);
             }
 
             const info = await response.json();
+            console.log('Publisher response:', JSON.stringify(info, null, 2));
 
             let blobInfo: UploadedBlobInfo;
 
             if ('alreadyCertified' in info) {
+                console.log('Already certified blob:', {
+                    blobId: info.alreadyCertified.blobId,
+                    event: info.alreadyCertified.event,
+                    endEpoch: info.alreadyCertified.endEpoch
+                });
                 blobInfo = {
                     status: 'Already certified',
                     blobId: info.alreadyCertified.blobId,
                     endEpoch: info.alreadyCertified.endEpoch,
-                    suiRef: info.alreadyCertified.event?.txDigest,
+                    suiRef: info.alreadyCertified.event?.txDigest || info.alreadyCertified.blobId,
                 };
             } else if ('newlyCreated' in info) {
+                console.log('Newly created blob:', {
+                    blobId: info.newlyCreated.blobObject.blobId,
+                    id: info.newlyCreated.blobObject.id,
+                    endEpoch: info.newlyCreated.blobObject.storage.endEpoch
+                });
                 blobInfo = {
                     status: 'Newly created',
                     blobId: info.newlyCreated.blobObject.blobId,
@@ -78,13 +92,15 @@ export function useUploadBlob(config: UploadBlobConfig = {}) {
                     suiRef: info.newlyCreated.blobObject.id,
                 };
             } else {
+                console.error('Unexpected response format:', info);
                 throw new Error('Unexpected response format');
             }
 
+            console.log('Final blobInfo:', blobInfo);
             setUploadedBlobs(prev => [blobInfo, ...prev]);
             return blobInfo;
         } catch (error) {
-            console.error('Detailed error in storeBlob:', {
+            console.error('Error in storeBlob:', {
                 error,
                 stack: error instanceof Error ? error.stack : undefined,
                 message: error instanceof Error ? error.message : 'Unknown error'

@@ -24,6 +24,13 @@ export function PlaneCard({ airplanes }: PlaneCardProps) {
     setIsExpanded(!isExpanded);
   };
 
+  // 添加日志输出
+  console.log('Airplanes data:', airplanes.map(plane => ({
+    name: plane.name,
+    blobs: plane.blobs,
+    content: plane.content
+  })));
+
   return (
     <div className="w-full max-w-md">
 
